@@ -4,6 +4,7 @@ import { CarouselProvider, Slider } from 'pure-react-carousel';
 import 'pure-react-carousel/dist/react-carousel.es.css';
 import ShortPlayer from 'components/ShortPlayer';
 import { HStack } from '@chakra-ui/react';
+import { getFollowingListResult } from 'apis/video';
 
 let swipeStartY = 0;
 

@@ -1,6 +1,6 @@
 import { call, put } from "@redux-saga/core/effects";
 import types from "actions/types";
-import { authLoginResult } from "apis/auth";
+// import { authLoginResult } from "apis/video";
 
 //LOGIN
 const OKLogin = () => {
@@ -17,7 +17,7 @@ const ErrLogin = () => {
 
 export function* loginSaga() {
   try {
-    yield call(authLoginResult);
+    // yield call(authLoginResult);
 
     yield put(OKLogin());
   } catch (error) {
