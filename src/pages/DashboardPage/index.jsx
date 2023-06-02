@@ -1,87 +1,93 @@
 import React, { useEffect, useState } from 'react';
 import { use100vh } from 'react-div-100vh';
-import { CarouselProvider, Slider } from 'pure-react-carousel';
 import 'pure-react-carousel/dist/react-carousel.es.css';
-import ShortPlayer from 'components/ShortPlayer';
-import { HStack } from '@chakra-ui/react';
-import { getFollowingListResult } from 'apis/video';
-import { useDispatch } from 'react-redux';
-import { getForYouListAction } from 'actions/creators/video';
+import {
+  Box,
+  Tab,
+  TabList,
+  TabPanels,
+  Tabs,
+} from '@chakra-ui/react';
+import { useDispatch, useSelector } from 'react-redux';
+import VideoListPanel from './components/VideoListPanel';
+import {
+  getFollowingListAction,
+  getForYouListAction,
+} from 'actions/creators/video';
 
-let swipeStartY = 0;
-
-const data = {
-  items: [
-    {
-      title: 'Audi_A4_S4',
-      cover: 'http://localhost:3000/images/Audi_A4_S4.png',
-      play_url: 'http://localhost:3000/media/Audi_A4_S4.m3u8',
-    },
-    {
-      title: 'Bugatti_Chiron',
-      cover: 'http://localhost:3000/images/Bugatti_Chiron.png',
-      play_url: 'http://localhost:3000/media/Bugatti_Chiron.m3u8',
-    },
-    {
-      title: 'Range_Rover_Sport_L322',
-      cover: 'http://localhost:3000/images/Range_Rover_Sport_L322.png',
-      play_url: 'http://localhost:3000/media/Range_Rover_Sport_L322.m3u8',
-    },
-  ],
+const classes = {
+  tabListBox: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    width: '100%',
+    zIndex: 500,
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  tab: {
+    color: 'gray.500',
+    _selected: { color: 'white' },
+    fontWeight: 'bold',
+  },
+  panel: {
+    outline: '0px',
+    outlineOffset: 0,
+    padding: 0,
+  },
 };
 
 function DashboardPage() {
-  const [isSwipe, setIsSwipe] = useState(false);
+  const { followingList, forYouList } = useSelector(({ video }) => video);
+  const [currentTabIndex, setCurrentTabIndex] = useState(0);
+  const groupList = [
+    { list: followingList, action: getFollowingListAction },
+    { list: forYouList, action: getForYouListAction },
+  ];
+
   const height = use100vh();
 
   const dispatch = useDispatch();
 
-  useEffect(()=>{
-    dispatch(getForYouListAction());
-  },[])
+  const handleTabChange = (nextIndex) => {
+    const { list, action } = groupList[nextIndex];
+    setCurrentTabIndex(nextIndex);
+
+    if (list) return;
+    dispatch(action());
+  };
+
+  useEffect(() => {
+    handleTabChange(currentTabIndex);
+  }, []);
 
   return (
-    <>
-      <CarouselProvider
-        naturalSlideHeight={height - 50}
-        naturalSlideWidth={400}
-        totalSlides={data.items.length}
-        orientation="vertical"
-        dragEnabled={false}
-      >
-        <Slider
-          preventVerticalScrollOnTouch={false}
-          moveThreshold={0.25}
-          trayProps={{
-            onTouchStart: (e) => {
-              swipeStartY = e.touches[0].clientY;
-            },
-            onTouchMove: (e) => {
-              const calcY = swipeStartY - e.touches[0].clientY;
-
-              if (Math.abs(calcY) >= 30 && !isSwipe) {
-                setIsSwipe(true);
-              }
-            },
-            onTransitionEnd: (e) => {
-              swipeStartY = null;
-              setIsSwipe(false);
-            },
-          }}
-        >
-          {data.items.map((item, i) => {
-            return (
-              <ShortPlayer
-                key={`ShortPlayer-${i}`}
-                index={i}
-                isSwipeNow={isSwipe}
-                {...item}
-              />
-            );
-          })}
-        </Slider>
-      </CarouselProvider>
-    </>
+    <Tabs
+      colorScheme="whiteAlpha.500"
+      variant="unstyled"
+      onChange={handleTabChange}
+      defaultIndex={currentTabIndex}
+    >
+      <Box sx={classes.tabListBox}>
+        <TabList>
+          <Tab sx={classes.tab}>Following</Tab>
+          <Tab sx={classes.tab}>For You</Tab>
+        </TabList>
+      </Box>
+      <TabPanels>
+        <VideoListPanel
+          isActive={currentTabIndex === 0}
+          list={followingList}
+          vh={height}
+        />
+        <VideoListPanel
+          isActive={currentTabIndex === 1}
+          list={forYouList}
+          vh={height}
+        />
+      </TabPanels>
+    </Tabs>
   );
 }
 

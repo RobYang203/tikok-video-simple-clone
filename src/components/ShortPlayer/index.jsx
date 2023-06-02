@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useContext, useRef } from 'react';
 import { CarouselContext, Slide } from 'pure-react-carousel';
 import { Image, chakra } from '@chakra-ui/react';
 import ReactPlayer from 'react-player';
@@ -24,10 +23,10 @@ const classes = {
   },
 };
 
-function ShortPlayer({ isSwipeNow, index, title, cover, play_url }) {
+function ShortPlayer({ isActive, isSwipe, index, title, cover, play_url }) {
   const { state } = useContext(CarouselContext);
   const ref = useRef();
-  const isChange = isSwipeNow || state.currentSlide !== index;
+  const isStop = !isActive || isSwipe || state.currentSlide !== index;
 
   return (
     <Slide index={index}>
@@ -35,19 +34,19 @@ function ShortPlayer({ isSwipeNow, index, title, cover, play_url }) {
         src={cover}
         alt={title}
         sx={classes.coverImage}
-        display={isChange ? 'block' : 'none'}
+        display={isStop ? 'block' : 'none'}
       />
       <ChakraPlayer
         ref={ref}
-        display={!isChange ? 'block' : 'none'}
-        playing={!isChange}
+        display={!isStop ? 'block' : 'none'}
+        playing={!isStop}
         loop
         url={state.currentSlide === index ? play_url : ''}
         playsinline
         sx={classes.player}
         muted={true}
         onPause={(e) => {
-          ref.current.seekTo(0);
+          if (isSwipe) ref.current.seekTo(0);
         }}
       />
     </Slide>

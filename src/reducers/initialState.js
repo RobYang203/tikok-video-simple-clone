@@ -1,4 +1,4 @@
 export const videoState = {
-  followingList: [],
-  forYouList: [],
+  followingList: null,
+  forYouList: null,
 };
