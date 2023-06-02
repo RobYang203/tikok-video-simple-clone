@@ -1,6 +1,6 @@
 import React, { useContext, useRef, useState } from 'react';
 import { CarouselContext, Slide } from 'pure-react-carousel';
-import { Image, chakra } from '@chakra-ui/react';
+import { Box, Image, chakra } from '@chakra-ui/react';
 import ReactPlayer from 'react-player';
 import ProgressBar from 'components/ProgressBar';
 
@@ -11,16 +11,24 @@ const classes = {
   root: {
     height: '100%',
     '& .carousel__slide-focus-ring': {
-      outline: '0px',
+      outlineColor: 'rgb(255 255 255 / 0%)',
+      outlineStyle: 'none'
     },
   },
   player: {
     width: '100% !important',
     height: `100% !important`,
   },
+  coverImageBox: {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+  },
   coverImage: {
     width: '100%',
     height: '100%',
+    objectFit: 'fit',
   },
 };
 
@@ -28,31 +36,39 @@ function ShortPlayer({ isActive, isSwipe, index, title, cover, play_url }) {
   const { state } = useContext(CarouselContext);
   const ref = useRef();
   const [currentSeconds, setCurrentSeconds] = useState(undefined);
+  const [loaded, setLoaded] = useState(false);
 
-  const isStop = !isActive || isSwipe || state.currentSlide !== index;
+  const isStop =
+    !loaded || !isActive || isSwipe || state.currentSlide !== index;
+  console.log('🚀 ~ file: index.jsx:41 ~ ShortPlayer ~ isStop:', isStop);
 
-  const handleProgressBarSlide = (seekSeconds) => { 
+  const handleProgressBarSlide = (seekSeconds) => {
     ref.current.seekTo(seekSeconds);
     setCurrentSeconds(seekSeconds);
-   }
+  };
 
   return (
     <ChakraSlide sx={classes.root} index={index}>
       <Image
         src={cover}
         alt={title}
-        sx={classes.coverImage}
         display={isStop ? 'block' : 'none'}
+        sx={classes.coverImage}
       />
+
       <ChakraPlayer
         ref={ref}
-        display={!isStop ? 'block' : 'none'}
+        style={
+          { dispaly: !isStop ? 'block' : 'none' }}
         playing={!isStop}
         loop
         url={state.currentSlide === index ? play_url : ''}
         playsinline
         sx={classes.player}
         muted={true}
+        onReady={(e) => {
+          setLoaded(true);
+        }}
         onPause={(e) => {
           if (isSwipe) ref.current.seekTo(0);
         }}
@@ -64,6 +80,7 @@ function ShortPlayer({ isActive, isSwipe, index, title, cover, play_url }) {
         totalSeconds={ref.current?.getDuration()}
         currentSeconds={currentSeconds}
         onSlide={handleProgressBarSlide}
+        isActive={!isStop}
       />
     </ChakraSlide>
   );

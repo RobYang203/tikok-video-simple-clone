@@ -31,9 +31,10 @@ const NOT_FOCUS_STYLE = {
   colorScheme: 'blackAlpha',
 };
 
-function ProgressBar({ totalSeconds, currentSeconds, onSlide }) {
+function ProgressBar({ isActive, totalSeconds, currentSeconds, onSlide }) {
   const [focusStyle, setFocusStyle] = useState(NOT_FOCUS_STYLE);
 
+  if (!isActive) return;
   return (
     <Box
       sx={classes.root}
