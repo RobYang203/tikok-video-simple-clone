@@ -1,20 +1,11 @@
-import { Box, Text, chakra } from '@chakra-ui/react';
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import ReactPlayer from 'react-player';
-import { Carousel } from 'react-responsive-carousel';
-import Div100vh, { use100vh } from 'react-div-100vh';
-import {
-  CarouselContext,
-  CarouselProvider,
-  Slide,
-  Slider,
-} from 'pure-react-carousel';
+import React, { useState } from 'react';
+import { use100vh } from 'react-div-100vh';
+import { CarouselProvider, Slider } from 'pure-react-carousel';
 import 'pure-react-carousel/dist/react-carousel.es.css';
 import ShortPlayer from 'components/ShortPlayer';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
+import { HStack } from '@chakra-ui/react';
 
-let moveY = 0;
+let swipeStartY = 0;
 
 const data = {
   items: [
@@ -43,7 +34,7 @@ function DashboardPage() {
   return (
     <>
       <CarouselProvider
-        naturalSlideHeight={height}
+        naturalSlideHeight={height - 50}
         naturalSlideWidth={400}
         totalSlides={data.items.length}
         orientation="vertical"
@@ -54,17 +45,17 @@ function DashboardPage() {
           moveThreshold={0.25}
           trayProps={{
             onTouchStart: (e) => {
-              moveY = e.touches[0].clientY;
+              swipeStartY = e.touches[0].clientY;
             },
             onTouchMove: (e) => {
-              const calcY = moveY - e.touches[0].clientY;
+              const calcY = swipeStartY - e.touches[0].clientY;
 
               if (Math.abs(calcY) >= 30 && !isSwipe) {
                 setIsSwipe(true);
               }
             },
             onTransitionEnd: (e) => {
-              moveY = null;
+              swipeStartY = null;
               setIsSwipe(false);
             },
           }}

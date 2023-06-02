@@ -28,10 +28,7 @@ function ShortPlayer({ isSwipeNow, index, title, cover, play_url }) {
   const { state } = useContext(CarouselContext);
   const ref = useRef();
   const isChange = isSwipeNow || state.currentSlide !== index;
-  useEffect(() => {
-    if (ref.current)
-      console.log('🚀 ~ file: index.jsx:30 ~ ShortPlayer ~ ref:', ref.current);
-  }, [isChange]);
+
   return (
     <Slide index={index}>
       <Image
@@ -51,7 +48,6 @@ function ShortPlayer({ isSwipeNow, index, title, cover, play_url }) {
         muted={true}
         onPause={(e) => {
           ref.current.seekTo(0);
-          console.log('🚀 ~ file: index.jsx:30 ~ onPause ~ ref:', e);
         }}
       />
     </Slide>
