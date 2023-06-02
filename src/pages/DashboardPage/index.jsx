@@ -1,19 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { use100vh } from 'react-div-100vh';
-import 'pure-react-carousel/dist/react-carousel.es.css';
-import {
-  Box,
-  Tab,
-  TabList,
-  TabPanels,
-  Tabs,
-} from '@chakra-ui/react';
+import { Box, Tab, TabList, TabPanels, Tabs } from '@chakra-ui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import VideoListPanel from './components/VideoListPanel';
 import {
   getFollowingListAction,
   getForYouListAction,
 } from 'actions/creators/video';
+
+import 'pure-react-carousel/dist/react-carousel.es.css';
 
 const classes = {
   tabListBox: {
@@ -30,6 +25,7 @@ const classes = {
     color: 'gray.500',
     _selected: { color: 'white' },
     fontWeight: 'bold',
+    borderWidth: 0,
   },
   panel: {
     outline: '0px',

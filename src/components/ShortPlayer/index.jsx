@@ -1,35 +1,43 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { CarouselContext, Slide } from 'pure-react-carousel';
 import { Image, chakra } from '@chakra-ui/react';
 import ReactPlayer from 'react-player';
+import ProgressBar from 'components/ProgressBar';
 
 const ChakraPlayer = chakra(ReactPlayer);
+const ChakraSlide = chakra(Slide);
 
 const classes = {
   root: {
     height: '100%',
+    '& .carousel__slide-focus-ring': {
+      outline: '0px',
+    },
   },
   player: {
-    '> video': {
-      objectFit: 'cover',
-    },
     width: '100% !important',
     height: `100% !important`,
   },
   coverImage: {
     width: '100%',
     height: '100%',
-    objectFit: 'cover',
   },
 };
 
 function ShortPlayer({ isActive, isSwipe, index, title, cover, play_url }) {
   const { state } = useContext(CarouselContext);
   const ref = useRef();
+  const [currentSeconds, setCurrentSeconds] = useState(undefined);
+
   const isStop = !isActive || isSwipe || state.currentSlide !== index;
 
+  const handleProgressBarSlide = (seekSeconds) => { 
+    ref.current.seekTo(seekSeconds);
+    setCurrentSeconds(seekSeconds);
+   }
+
   return (
-    <Slide index={index}>
+    <ChakraSlide sx={classes.root} index={index}>
       <Image
         src={cover}
         alt={title}
@@ -48,8 +56,16 @@ function ShortPlayer({ isActive, isSwipe, index, title, cover, play_url }) {
         onPause={(e) => {
           if (isSwipe) ref.current.seekTo(0);
         }}
+        onProgress={(e) => {
+          setCurrentSeconds(e.playedSeconds);
+        }}
       />
-    </Slide>
+      <ProgressBar
+        totalSeconds={ref.current?.getDuration()}
+        currentSeconds={currentSeconds}
+        onSlide={handleProgressBarSlide}
+      />
+    </ChakraSlide>
   );
 }
 

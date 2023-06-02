@@ -22,7 +22,7 @@ function Index() {
   return (
     <Provider store={store}>
       <BrowserRouter>
-        <ChakraProvider theme={{ ...theme, otherVariables: { height } }}>
+        <ChakraProvider resetCSS theme={{ ...theme, otherVariables: { height } }}>
           <App />
         </ChakraProvider>
       </BrowserRouter>

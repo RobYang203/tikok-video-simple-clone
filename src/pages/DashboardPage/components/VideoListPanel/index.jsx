@@ -4,6 +4,7 @@ import ShortPlayer from 'components/ShortPlayer';
 import { Spinner, TabPanel } from '@chakra-ui/react';
 
 let swipeStartY = 0;
+const SWIPE_THRESHOLD = 50;
 
 const classes = {
   root: {
@@ -43,12 +44,13 @@ function VideoListPanel({ isActive, list, vh }) {
           moveThreshold={0.25}
           trayProps={{
             onTouchStart: (e) => {
+              console.log("🚀 ~ file: index.jsx:1 ~ VideoListPanel ~ e:", e)
               swipeStartY = e.touches[0].clientY;
             },
             onTouchMove: (e) => {
               const calcY = swipeStartY - e.touches[0].clientY;
 
-              if (Math.abs(calcY) >= 30 && !isSwipe) {
+              if (Math.abs(calcY) >= SWIPE_THRESHOLD && !isSwipe) {
                 setIsSwipe(true);
               }
             },
