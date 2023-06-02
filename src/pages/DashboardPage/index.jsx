@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { use100vh } from 'react-div-100vh';
 import { CarouselProvider, Slider } from 'pure-react-carousel';
 import 'pure-react-carousel/dist/react-carousel.es.css';
 import ShortPlayer from 'components/ShortPlayer';
 import { HStack } from '@chakra-ui/react';
 import { getFollowingListResult } from 'apis/video';
+import { useDispatch } from 'react-redux';
+import { getForYouListAction } from 'actions/creators/video';
 
 let swipeStartY = 0;
 
@@ -31,6 +33,12 @@ const data = {
 function DashboardPage() {
   const [isSwipe, setIsSwipe] = useState(false);
   const height = use100vh();
+
+  const dispatch = useDispatch();
+
+  useEffect(()=>{
+    dispatch(getForYouListAction());
+  },[])
 
   return (
     <>

@@ -1,8 +1,4 @@
-export const authState = {
-  isAuth: false,
-  user: {},
-};
-
-export const infoState = {
-  cache: {},
+export const videoState = {
+  followingList: [],
+  forYouList: [],
 };
